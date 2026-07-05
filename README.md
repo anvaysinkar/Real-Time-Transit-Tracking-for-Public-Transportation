@@ -2,20 +2,20 @@
 
 An end-to-end IoT + AI system for real-time passenger counting and demand forecasting in public transportation.
 
-## 🚀 Overview
+## Overview
 RTTT is a low-cost, privacy-preserving transit analytics system designed to solve overcrowding and inefficiency in urban bus networks. It combines a custom hardware prototype with intelligent data processing and a scalable predictive modeling pipeline.
 
 The system uses sensor fusion (pressure mat + IR sensors) powered by an ESP32 microcontroller to accurately detect passenger boarding and alighting events in real time.
 
-## 🧠 Key Features
-- 📊 Real-time passenger counting using sensor fusion (Pressure Mat + IR)
-- 🔒 Privacy-preserving (no cameras, no personal data)
-- ⚡ Lightweight, low-cost hardware (~₹2500 per unit)
-- 🌐 Live data transmission via ESP32 Wi-Fi
-- 📍 GPS-based location tagging
-- 📈 Future-ready hybrid forecasting model (SARIMA + LSTM)
+## Key Features
+- Real-time passenger counting using sensor fusion (Pressure Mat + IR)
+- Privacy-preserving (no cameras, no personal data)
+- Lightweight, low-cost hardware (~₹2500 per unit)
+- Live data transmission via ESP32 Wi-Fi
+- GPS-based location tagging
+- Future-ready hybrid forecasting model (SARIMA + LSTM)
 
-## 🏗️ System Architecture
+## System Architecture
 1. **Sensor Layer**
    - Velostat-based pressure mat
    - IR break-beam sensors for direction detection
@@ -35,12 +35,12 @@ The system uses sensor fusion (pressure mat + IR sensors) powered by an ESP32 mi
    - LSTM for nonlinear residuals
    - 24-hour occupancy forecasting
 
-## 📊 Performance
-- ✅ Overall accuracy: **90.4%**
-- 🚶 Single-file accuracy: **~98%**
-- ⚠️ Crowded scenarios: **~70.8%** (known trade-off)
+## Performance
+-  Overall accuracy: **90.4%**
+-  Single-file accuracy: **~98%**
+-  Crowded scenarios: **~70.8%** (known trade-off)
 
-## 🧪 Validation
+## Validation
 Tested across multiple real-world scenarios:
 - Single passenger flow
 - High traffic streams
@@ -48,7 +48,7 @@ Tested across multiple real-world scenarios:
 - Luggage interference
 - Direction changes
 
-## 📡 Example Data Payload
+## Example Data Payload
 ```json
 {
   "timestamp": "2025-05-07T13:45:08Z",
