@@ -27,17 +27,27 @@ Crowded entry is the known weak spot: a single-zone mat can't separate two peopl
 |---|---|---|
 | ![](hardware/mat_side_view.jpg) | ![](hardware/mat_top_layer.jpg) | ![](hardware/mat_bottom_layer.jpg) |
 
-## Firmware in this repo
+## Firmware
 
-[`firmware/pressure_mat_counter/pressure_mat_counter.ino`](firmware/pressure_mat_counter/pressure_mat_counter.ino) is the **pressure-mat counter used during prototype testing**. It does the following:
+### `firmware/rttt_sensor_fusion/` (main)
 
-- reads the mat on GPIO34 every 10 ms
-- counts a step when the reading drops below 700, then re-arms once the mat is released (reading 1000–4095), with a 700 ms cooldown
-- runs a Wi-Fi access point with a web dashboard: two "bus stop" counters you can start and stop, a live clock, and a button to save the counts to a text file
+The full sensor-fusion node from Section III of the paper. Wiring and network settings are in `config.h`.
 
-It needs the ESPAsyncWebServer and AsyncTCP libraries.
+- **Direction:** `IR_OUTER → mat → IR_INNER` within 1.5 s is a boarding, and the reverse is an alighting. It runs as a state machine: `IDLE → AWAITING_PRESSURE → AWAITING_SECOND_IR → EVENT_COMPLETE`. Only a complete sequence counts, so luggage that only presses the mat and a passenger who steps in and turns back are both ignored.
+- **Filtering:** the IR inputs are debounced (30 ms). The mat ADC goes through an 8-sample moving average and is compared with a threshold from a one-time calibration: over serial, `i` records the empty mat and `o` records one person standing on it. The calibration is saved in flash.
+- **Lingering:** after an event, nothing new counts until the mat is released and both beams are clear, so one person counts once per crossing.
+- **Crowding:** if the mat reading falls far below the one-person level, two or three people stepped on together. That still counts as one event, as in the paper, but is sent with `is_crowded_event: true`.
+- **Output:** each event becomes the JSON payload below, with a GPS timestamp and position from the NEO-6M, or NTP time until the GPS has a fix.
+  - The node runs its own Wi-Fi access point with a live dashboard: occupancy, boarded and alighted counts, position, and the event log, which can be downloaded as a text file.
+  - If `WIFI_SSID` and `BACKEND_URL` are set, events are also HTTP POSTed to the backend, and queued while the node is offline.
 
-The IR direction logic, GPS tagging and JSON upload to the cloud described in the paper are **not in this sketch**.
+Libraries: TinyGPSPlus. Everything else ships with the ESP32 Arduino core.
+
+**Verification:** `tests/fusion_sim` runs the real sketch on a PC with mocked ESP32 APIs and scripted beam and mat inputs. The cases are boarding, alighting, a crowded entry, luggage only, turning back, lingering on the mat, and a sequence slower than the window. Running `make` there should print `PASS`. This firmware was written from the paper's design and has not yet been flashed onto the prototype.
+
+### `firmware/pressure_mat_counter/` (earlier test sketch)
+
+The mat-only counter from early prototype testing. It counts steps on GPIO34 and has a two-counter web page, with no IR or GPS. It is kept for reference.
 
 ## Media
 
